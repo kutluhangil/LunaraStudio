@@ -27,7 +27,7 @@ import { getRandomItem } from './src/utils/helpers';
 import { motion } from 'motion/react';
 import { PromptBuilder, HelperSection } from './src/components/PromptBuilder';
 import { handleDownloadMidi } from './src/utils/midiUtils';
-import { ThumbsUp, ThumbsDown, Music, Undo2, Redo2 } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Music, Undo2, Redo2, Layers, Wand2, History } from 'lucide-react';
 
 const App: React.FC = () => {
   const [hasStarted, setHasStarted] = useState(false);
@@ -50,6 +50,7 @@ const App: React.FC = () => {
 
   const [queue, setQueue] = useState<string[]>([]);
   const [savedPrompts, setSavedPrompts] = useState<string[]>([]);
+  const [masteringStatus, setMasteringStatus] = useState<Record<string, 'processing' | 'done'>>({});
   
   const [history, setHistory] = useState<{prompt: string, helperSections: HelperSection[], isManual: boolean}[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -209,11 +210,13 @@ const App: React.FC = () => {
       const generated = helperSections.map(s => {
         const scaleInfo = s.scale ? ` in the scale of ${s.scale}` : '';
         const bpmInfo = s.bpm ? ` at a tempo of ${s.bpm}` : '';
+        const chordsInfo = s.chords ? ` using a ${s.chords} chord progression` : '';
+        const vocalsInfo = s.vocals ? ` with ${s.vocals.toLowerCase()} vocals` : '';
 
         if (s.type === 'main') {
-          return `Create a beautifully crafted, ${s.mood?.toLowerCase() || 'neutral'} ${s.gender?.toLowerCase() || 'vocal'} track focusing on ${s.theme?.toLowerCase() || 'a specific topic'}${scaleInfo}${bpmInfo}.`;
+          return `Create a beautifully crafted, ${s.mood?.toLowerCase() || 'neutral'} ${s.gender?.toLowerCase() || 'vocal'} track focusing on ${s.theme?.toLowerCase() || 'a specific topic'}${scaleInfo}${bpmInfo}${chordsInfo}${vocalsInfo}.`;
         } else {
-          return `[At ${s.timestamp}], the musical arrangement smoothly transitions into a ${s.mood?.toLowerCase()} soundscape, featuring a ${s.gender?.toLowerCase()} style${scaleInfo}${bpmInfo}.`;
+          return `[At ${s.timestamp}], the musical arrangement smoothly transitions into a ${s.mood?.toLowerCase()} soundscape, featuring a ${s.gender?.toLowerCase()} style${scaleInfo}${bpmInfo}${chordsInfo}${vocalsInfo}.`;
         }
       }).join('\n');
       setPrompt(generated);
@@ -409,6 +412,35 @@ const App: React.FC = () => {
   const handleDownload = (result: SongResult) => {
     if (!result.audioUrl) return;
     const link = document.createElement('a'); link.href = result.audioUrl; link.download = `${result.title || 'Lunara'}.wav`; link.click();
+  };
+
+  const handleDownloadStems = (result: SongResult) => {
+    if (!result.audioUrl) return;
+    // Mock downloading multiple files by triggering them with timeouts
+    const stems = ['Vocals', 'Drums', 'Bass', 'Other'];
+    stems.forEach((stem, index) => {
+      setTimeout(() => {
+        const link = document.createElement('a');
+        link.href = result.audioUrl as string;
+        link.download = `${result.title || 'Lunara'}_${stem}.wav`;
+        link.click();
+      }, index * 500); 
+    });
+  };
+
+  const handleRemix = (result: SongResult) => {
+    setPrompt(result.originalPrompt);
+    setIsPromptManual(true);
+    setIsHelperOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleMastering = (id: string, currentStatus: string) => {
+    if (currentStatus === 'processing' || currentStatus === 'done') return;
+    setMasteringStatus(prev => ({ ...prev, [id]: 'processing' }));
+    setTimeout(() => {
+      setMasteringStatus(prev => ({ ...prev, [id]: 'done' }));
+    }, 2500);
   };
 
   const onDownloadVideo = async (result: SongResult, withLyrics: boolean = false) => {
@@ -846,6 +878,10 @@ const App: React.FC = () => {
                                         <div className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center"><Music className="w-4 h-4" /></div>
                                         <div><div className="text-[10px] font-bold uppercase tracking-wider text-gray-900">MIDI Data</div><div className="text-[9px] text-gray-400">DAW ready sequences</div></div>
                                       </button>
+                                      <button onClick={(e) => { e.stopPropagation(); handleDownloadStems(result); }} className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 border-t border-gray-50 transition-colors">
+                                        <div className="w-8 h-8 bg-green-50 text-green-600 rounded-lg flex items-center justify-center"><Layers className="w-4 h-4" /></div>
+                                        <div><div className="text-[10px] font-bold uppercase tracking-wider text-gray-900">Stems</div><div className="text-[9px] text-gray-400">Vocals, Drums, Bass, Other</div></div>
+                                      </button>
                                       <button onClick={(e) => { e.stopPropagation(); onDownloadVideo(result, false); }} className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 border-t border-gray-50 transition-colors">
                                         <div className="w-8 h-8 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center"><Icons.Video className="w-4 h-4" /></div>
                                         <div><div className="text-[10px] font-bold uppercase tracking-wider text-gray-900">Video</div><div className="text-[9px] text-gray-400">Reactive visual map</div></div>
@@ -889,6 +925,14 @@ const App: React.FC = () => {
                                 <button onClick={(e) => { e.stopPropagation(); handleAddToQueue(result.id); }} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border ${queue.includes(result.id) ? 'bg-indigo-50 text-indigo-600 border-indigo-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 shadow-sm'} flex items-center gap-2`}>
                                   <Icons.List className="w-3.5 h-3.5" />
                                   {queue.includes(result.id) ? 'Queued' : 'Queue'}
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation(); handleRemix(result); }} className="px-4 py-2.5 rounded-xl text-xs font-bold transition-all border bg-white text-gray-600 border-gray-200 hover:bg-gray-50 shadow-sm flex items-center gap-2">
+                                  <History className="w-3.5 h-3.5" />
+                                  Remix
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation(); handleMastering(result.id, masteringStatus[result.id] || 'idle'); }} disabled={masteringStatus[result.id] === 'processing'} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border ${masteringStatus[result.id] === 'done' ? 'bg-indigo-500 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50 shadow-sm'} flex items-center gap-2`}>
+                                  <Wand2 className="w-3.5 h-3.5" />
+                                  {masteringStatus[result.id] === 'processing' ? 'Mastering...' : masteringStatus[result.id] === 'done' ? 'Mastered' : 'AI Master'}
                                 </button>
                                 <button onClick={(e) => { e.stopPropagation(); handleFeedback(result.id, 'like'); }} className={`p-3 rounded-xl transition-colors shadow-sm ${feedbacks[result.id] === 'like' ? 'bg-green-100 text-green-600' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'}`}><ThumbsUp className="w-4 h-4" /></button>
                                 <button onClick={(e) => { e.stopPropagation(); handleFeedback(result.id, 'dislike'); }} className={`p-3 rounded-xl transition-colors shadow-sm ${feedbacks[result.id] === 'dislike' ? 'bg-red-100 text-red-600' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'}`}><ThumbsDown className="w-4 h-4" /></button>
@@ -973,21 +1017,44 @@ const App: React.FC = () => {
                   const isPlaying = isResultPlaying === qId;
                   return (
                     <div key={`${qId}-${index}`} className={`flex-shrink-0 w-48 p-3 rounded-2xl border ${isPlaying ? 'border-indigo-300 bg-indigo-50' : 'border-gray-100 bg-gray-50'} relative group`}>
-                      <div className="text-xs font-bold text-gray-800 truncate mb-1 pr-6">{s.title || 'Untitled'}</div>
+                      <div className="flex justify-between items-start mb-1">
+                        <div className="text-xs font-bold text-gray-800 truncate pr-2 flex items-center gap-1" title={s.title || 'Untitled'} >
+                           {isPlaying && <span className="animate-pulse w-1.5 h-1.5 bg-indigo-500 rounded-full inline-block"></span>}
+                           {s.title || 'Untitled'}
+                        </div>
+                      </div>
                       <div className="text-[10px] text-gray-500 truncate">{s.duration}</div>
+                      
                       <button onClick={() => {
                         const newQ = [...queue];
                         newQ.splice(index, 1);
                         setQueue(newQ);
                         if (isPlaying) {
                            const audio = document.getElementById(`audio-${qId}`) as HTMLAudioElement;
-                           if (audio) audio.pause();
+                           if (audio) { audio.pause(); audio.currentTime = 0; setIsResultPlaying(null); }
                         }
-                      }} className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                      }} className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                         <Icons.X className="w-3.5 h-3.5" />
                       </button>
+
+                      <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                         <button disabled={index === 0} onClick={() => {
+                             const newQ = [...queue];
+                             const temp = newQ[index - 1];
+                             newQ[index - 1] = newQ[index];
+                             newQ[index] = temp;
+                             setQueue(newQ);
+                         }} className="p-1 bg-white border border-gray-200 rounded text-gray-500 hover:text-indigo-600 disabled:opacity-30"><Icons.ChevronLeft className="w-3 h-3" /></button>
+                         <button disabled={index === queue.length - 1} onClick={() => {
+                             const newQ = [...queue];
+                             const temp = newQ[index + 1];
+                             newQ[index + 1] = newQ[index];
+                             newQ[index] = temp;
+                             setQueue(newQ);
+                         }} className="p-1 bg-white border border-gray-200 rounded text-gray-500 hover:text-indigo-600 disabled:opacity-30"><Icons.ChevronRight className="w-3 h-3" /></button>
+                      </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
            </div>

@@ -23,14 +23,16 @@ export interface HelperSection {
   text?: string;
   bpm?: string;
   scale?: string;
+  vocals?: string;
+  chords?: string;
 }
 
 interface PromptBuilderProps {
   isHelperOpen: boolean;
   helperSections: HelperSection[];
   setHelperSections: React.Dispatch<React.SetStateAction<HelperSection[]>>;
-  activeSelector: { sectionId: string, type: 'mood' | 'gender' | 'theme' | 'timestamp' | 'bpm' | 'scale' } | null;
-  setActiveSelector: React.Dispatch<React.SetStateAction<{ sectionId: string, type: 'mood' | 'gender' | 'theme' | 'timestamp' | 'bpm' | 'scale' } | null>>;
+  activeSelector: { sectionId: string, type: 'mood' | 'gender' | 'theme' | 'timestamp' | 'bpm' | 'scale' | 'vocals' | 'chords' } | null;
+  setActiveSelector: React.Dispatch<React.SetStateAction<{ sectionId: string, type: 'mood' | 'gender' | 'theme' | 'timestamp' | 'bpm' | 'scale' | 'vocals' | 'chords' } | null>>;
   selectedImages: { data: string, mimeType: string, previewUrl: string }[];
   onImageSelect: () => void;
   onImageRemove: (index: number) => void;
@@ -91,7 +93,7 @@ export const PromptBuilder: React.FC<PromptBuilderProps> = ({
    * @param type The type of attribute (mood, gender, theme, timestamp, bpm, scale).
    * @returns The rendered dropdown selector or null if not active.
    */
-  const renderSelector = (sectionId: string, type: 'mood' | 'gender' | 'theme' | 'timestamp' | 'bpm' | 'scale') => {
+  const renderSelector = (sectionId: string, type: 'mood' | 'gender' | 'theme' | 'timestamp' | 'bpm' | 'scale' | 'vocals' | 'chords') => {
     if (activeSelector?.sectionId !== sectionId || activeSelector?.type !== type) return null;
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,7 +103,9 @@ export const PromptBuilder: React.FC<PromptBuilderProps> = ({
                     type === 'theme' ? configData.themes : 
                     type === 'timestamp' ? configData.timestamps :
                     type === 'bpm' ? configData.bpms :
-                    configData.scales;
+                    type === 'scale' ? configData.scales :
+                    type === 'vocals' ? configData.vocals :
+                    configData.chords;
                     
     const section = helperSections.find(s => s.id === sectionId);
     const currentValue = section ? (section[type as keyof HelperSection] as string) : '';
@@ -169,7 +173,7 @@ export const PromptBuilder: React.FC<PromptBuilderProps> = ({
    * @param label The label to display if the value is not set.
    * @returns The rendered value pill.
    */
-  const renderOptionalValuePill = (s: HelperSection, type: 'bpm' | 'scale', label: string) => {
+  const renderOptionalValuePill = (s: HelperSection, type: 'bpm' | 'scale' | 'vocals' | 'chords', label: string) => {
     const value = s[type];
     return (
       <div className="relative">
@@ -230,6 +234,8 @@ export const PromptBuilder: React.FC<PromptBuilderProps> = ({
               </div>
               {renderOptionalValuePill(s, 'bpm', 'Add BPM')}
               {renderOptionalValuePill(s, 'scale', 'Add Scale')}
+              {renderOptionalValuePill(s, 'vocals', 'Add Vocals')}
+              {renderOptionalValuePill(s, 'chords', 'Add Chords')}
             </>
           ) : (
             <>
@@ -255,6 +261,8 @@ export const PromptBuilder: React.FC<PromptBuilderProps> = ({
               </div>
               <span className="text-gray-400"> song.</span>
               {renderOptionalValuePill(s, 'scale', 'Add Scale')}
+              {renderOptionalValuePill(s, 'vocals', 'Add Vocals')}
+              {renderOptionalValuePill(s, 'chords', 'Add Chords')}
               <button onClick={(e) => { e.stopPropagation(); setHelperSections(prev => prev.filter(sec => sec.id !== s.id)); }} className="text-gray-300 hover:text-red-400 transition-colors p-1 ml-auto"><Icons.X className="w-5 h-5" /></button>
             </>
           )}

@@ -19,6 +19,8 @@ export const PROMPT_HELPER_CONFIG = {
   timestamps: ['0:10', '0:20', '0:30', '0:45', '1:00', '1:15', '1:30', '2:00'],
   bpms: ['80 BPM', '100 BPM', '120 BPM', '128 BPM', '140 BPM', '160 BPM', '172 BPM'],
   scales: ['C Major', 'A Minor', 'G Major', 'E Minor', 'D Minor', 'F Major', 'Blues Scale', 'Phrygian'],
+  vocals: ['Male Pop', 'Female Pop', 'Deep Male Vocals', 'Soprano Female', 'Raspy Rock', 'Smooth R&B', 'Aggressive Rap', 'Breathless Whisper', 'Child Choir'],
+  chords: ['I-IV-V (Classic)', 'I-V-vi-IV (Pop standard)', 'ii-V-I (Jazz classic)', 'vi-IV-I-V (Epic pop)', 'i-VII-VI (Dark descent)'],
   tooltips: {
     moods: {
       'Epic': 'Grand, sweeping, and larger-than-life.',
@@ -100,6 +102,24 @@ export const PROMPT_HELPER_CONFIG = {
       'F Major': 'Calm, pastoral, and controlled.',
       'Blues Scale': 'Soulful, expressive, and edgy.',
       'Phrygian': 'Exotic, dark, and tense.'
+    },
+    vocals: {
+      'Male Pop': 'Standard male pop vocals with moderate pitch.',
+      'Female Pop': 'Bright, clear female pop vocals.',
+      'Deep Male Vocals': 'Low, resonant male voice.',
+      'Soprano Female': 'High-pitched, classical female voice.',
+      'Raspy Rock': 'Gritty, textured rock vocals.',
+      'Smooth R&B': 'Silky, soulful singing.',
+      'Aggressive Rap': 'Hard-hitting rhythmic delivery.',
+      'Breathless Whisper': 'Intimate, quiet spoken-word/singing.',
+      'Child Choir': 'Innocent, large group of children singing.'
+    },
+    chords: {
+      'I-IV-V (Classic)': 'The foundation of rock and blues.',
+      'I-V-vi-IV (Pop standard)': 'The most common modern pop progression.',
+      'ii-V-I (Jazz classic)': 'Standard jazz turnaround.',
+      'vi-IV-I-V (Epic pop)': 'Emotional, driving progression.',
+      'i-VII-VI (Dark descent)': 'Dramatic minor drop.'
     }
   }
 };
@@ -187,6 +207,11 @@ export const Icons = {
   ChevronRight: ({ className }: { className?: string }) => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <polyline points="9 18 15 12 9 6" />
+    </svg>
+  ),
+  ChevronLeft: ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polyline points="15 18 9 12 15 6" />
     </svg>
   ),
   ChevronDown: ({ className }: { className?: string }) => (
