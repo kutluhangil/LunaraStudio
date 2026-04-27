@@ -26,7 +26,9 @@ export const handleDownloadVideo = async (
   onProgress: (progress: number) => void,
   onComplete: () => void,
   visualizerType: 'bars' | 'waveform' | 'particles' = 'bars',
-  visualizerColor: string = 'rgba(255, 45, 85, 0.8)'
+  visualizerColor: string = 'rgba(255, 45, 85, 0.8)',
+  density: number = 1,
+  speed: number = 1
 ) => {
   logFunctionCall('handleDownloadVideo', { resultId: result.id, withLyrics });
   if (!result.audioUrl || !result.coverImageUrl) {
@@ -195,12 +197,16 @@ export const handleDownloadVideo = async (
       ctx.lineTo(1080, 540);
       ctx.stroke();
     } else if (visualizerType === 'particles') {
-      const barWidth = 1080 / bufferLength;
-      for (let i = 0; i < bufferLength; i++) {
-        const val = dataArray[i];
+      const particleCount = Math.floor(bufferLength * density);
+      const barWidth = 1080 / particleCount;
+      const speedOffset = (Date.now() / 1000 * speed) % bufferLength;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const dataIndex = Math.floor((i + speedOffset) % bufferLength);
+        const val = dataArray[dataIndex] || 0;
         if (val > 0) {
           ctx.beginPath();
-          ctx.arc(i * barWidth, 1080 - (val / 255) * 500, Math.max(2, val / 40), 0, 2 * Math.PI, false);
+          ctx.arc(i * barWidth, 1080 - (val / 255) * 500, Math.max(2, (val / 40) * density), 0, 2 * Math.PI, false);
           ctx.fillStyle = visualizerColor;
           ctx.fill();
         }

@@ -55,3 +55,12 @@ input:focus, textarea:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: #aaa;
 }
+
+.dark-mode {
+  filter: invert(1) hue-rotate(180deg);
+  background-color: #fff;
+}
+
+.dark-mode img, .dark-mode video, .dark-mode canvas {
+  filter: invert(1) hue-rotate(180deg);
+}

@@ -48,6 +48,54 @@ export const PromptBuilder: React.FC<PromptBuilderProps> = ({
   onImageSelect,
   onImageRemove
 }) => {
+  const [isPlayingSnippet, setIsPlayingSnippet] = React.useState<string | null>(null);
+
+  const playSnippet = (section: HelperSection) => {
+    if (isPlayingSnippet === section.id) return;
+    setIsPlayingSnippet(section.id);
+    
+    // Simple Web Audio API synth
+    const Ctx = window.AudioContext || (window as any).webkitAudioContext;
+    const ctx = new Ctx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    // Pick base frequency based on scale loosely
+    const baseFreqs: Record<string, number> = {
+      'C Major': 261.63, 'A Minor': 220, 'G Major': 392, 'E Minor': 329.63, 'D Minor': 293.66, 'F Major': 349.23
+    };
+    osc.frequency.value = section.scale && baseFreqs[section.scale] ? baseFreqs[section.scale] : 440;
+    
+    // Modify based on mood
+    if (section.mood === 'Aggressive') osc.type = 'sawtooth';
+    else if (section.mood === 'Dreamy') osc.type = 'sine';
+    else osc.type = 'triangle';
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    // bpm simulation for notes
+    const bpmMatch = section.bpm ? section.bpm.match(/\d+/) : null;
+    const bpm = bpmMatch ? parseInt(bpmMatch[0], 10) : 120;
+    const beatDuration = 60 / bpm;
+
+    let now = ctx.currentTime;
+    // Play 4 notes
+    for (let i=0; i<4; i++) {
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.5, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + beatDuration - 0.05);
+        now += beatDuration;
+    }
+
+    osc.start();
+    osc.stop(now);
+    
+    setTimeout(() => {
+        setIsPlayingSnippet(null);
+    }, (now - ctx.currentTime) * 1000);
+  };
+
   const [customInputValue, setCustomInputValue] = useState('');
 
   /**
@@ -236,6 +284,13 @@ export const PromptBuilder: React.FC<PromptBuilderProps> = ({
               {renderOptionalValuePill(s, 'scale', 'Add Scale')}
               {renderOptionalValuePill(s, 'vocals', 'Add Vocals')}
               {renderOptionalValuePill(s, 'chords', 'Add Chords')}
+              <button 
+                onClick={(e) => { e.stopPropagation(); playSnippet(s); }}
+                className="ml-auto flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+                title="Preview Snippet"
+              >
+                {isPlayingSnippet === s.id ? <div className="w-2.5 h-2.5 bg-blue-600 animate-pulse rounded-full" /> : <Icons.Play className="w-4 h-4 ml-0.5" />}
+              </button>
             </>
           ) : (
             <>
@@ -263,7 +318,14 @@ export const PromptBuilder: React.FC<PromptBuilderProps> = ({
               {renderOptionalValuePill(s, 'scale', 'Add Scale')}
               {renderOptionalValuePill(s, 'vocals', 'Add Vocals')}
               {renderOptionalValuePill(s, 'chords', 'Add Chords')}
-              <button onClick={(e) => { e.stopPropagation(); setHelperSections(prev => prev.filter(sec => sec.id !== s.id)); }} className="text-gray-300 hover:text-red-400 transition-colors p-1 ml-auto"><Icons.X className="w-5 h-5" /></button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); playSnippet(s); }}
+                className="ml-auto flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+                title="Preview Snippet"
+              >
+                {isPlayingSnippet === s.id ? <div className="w-2.5 h-2.5 bg-blue-600 animate-pulse rounded-full" /> : <Icons.Play className="w-4 h-4 ml-0.5" />}
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); setHelperSections(prev => prev.filter(sec => sec.id !== s.id)); }} className="text-gray-300 hover:text-red-400 transition-colors p-1"><Icons.X className="w-5 h-5" /></button>
             </>
           )}
         </div>

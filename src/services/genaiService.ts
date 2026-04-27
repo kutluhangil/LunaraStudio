@@ -21,7 +21,7 @@ import { logFunctionCall, logGenAiCall } from '../utils/logger';
 export const suggestPrompts = async (topics: string): Promise<string[]> => {
   logFunctionCall('suggestPrompts', { topics });
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const prompt = `Based on these themes/moods/genres/details: "${topics}", suggest 3 creative, coherent, and evocative music generation prompts (1-2 sentences each). Return them separated by a pipe character "|". Do not include quotation marks or numbers in the output. Example output: An upbeat energetic synthwave track for late night driving | A melancholic lonely piano solo with rain sounds | A heavy aggressive trap beat with dark brass elements`;
     const response = await ai.models.generateContent({
       model: CONFIG.TEXT_MODEL,
@@ -53,7 +53,7 @@ export const parseModelOutput = (text: string): { lyrics: string, metadata: stri
 export const generateSongTitle = async (musicPrompt: string, lyricContext: string): Promise<string> => {
   logFunctionCall('generateSongTitle', { musicPrompt, lyricContextLength: lyricContext.length });
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const prompt = `Based on this music prompt: "${musicPrompt}" and these lyrics: "${lyricContext.substring(0, 500)}", generate a catchy, evocative, short song title (3 words max). Return ONLY the title string, no quotes or extra text.`;
     const response = await ai.models.generateContent({
       model: CONFIG.TEXT_MODEL,
@@ -78,7 +78,7 @@ export const generateCoverArt = async (musicPrompt: string, lyricContext: string
   logFunctionCall('generateCoverArt', { musicPrompt, lyricContextLength: lyricContext.length, title });
   const imagePrompt = `A high-quality, professional square song cover for a music track titled "${title || 'Music'}". Atmosphere: ${musicPrompt}. Context: ${ lyricContext.substring(0, 200) }. Abstract, cinematic aesthetic. IMPORTANT: Ignore any mention of BPM or musical scale in the prompt; do NOT print any numbers, BPM, or scale text on the image.`;
   try {
-    const imgGenAi = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const imgGenAi = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const config = { imageConfig: { aspectRatio: "1:1" } };
     const contents = { parts: [{ text: imagePrompt }] };
     const imageResponse = await imgGenAi.models.generateContent({
