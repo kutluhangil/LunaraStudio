@@ -20,16 +20,17 @@ import { logFunctionCall } from './logger';
  * @param onProgress Callback function to report encoding progress (0-100).
  * @param onComplete Callback function executed when encoding finishes.
  */
-export const handleDownloadVideo = async (
-  result: SongResult,
-  withLyrics: boolean,
-  onProgress: (progress: number) => void,
-  onComplete: () => void,
-  visualizerType: 'bars' | 'waveform' | 'particles' = 'bars',
-  visualizerColor: string = 'rgba(255, 45, 85, 0.8)',
-  density: number = 1,
-  speed: number = 1
-) => {
+  export const handleDownloadVideo = async (
+    result: SongResult,
+    withLyrics: boolean,
+    onProgress: (progress: number) => void,
+    onComplete: () => void,
+    visualizerType: 'bars' | 'waveform' | 'particles' | 'circular' | 'geometric' = 'bars',
+    visualizerColor: string = 'rgba(255, 45, 85, 0.8)',
+    density: number = 1,
+    speed: number = 1,
+    animationStyle: 'pulsing' | 'spinning' | 'flowing' = 'flowing'
+  ) => {
   logFunctionCall('handleDownloadVideo', { resultId: result.id, withLyrics });
   if (!result.audioUrl || !result.coverImageUrl) {
     onComplete();
@@ -211,6 +212,50 @@ export const handleDownloadVideo = async (
           ctx.fill();
         }
       }
+    } else if (visualizerType === 'circular') {
+      const centerX = 1080 / 2;
+      const centerY = 1080 / 2;
+      const radius = 200;
+      
+      analyser.getByteFrequencyData(dataArray);
+      ctx.beginPath();
+      for (let i = 0; i < bufferLength; i++) {
+        const val = dataArray[i];
+        const rads = Math.PI * 2 / bufferLength;
+        const x = centerX + Math.cos(rads * i) * (radius + val * 0.8);
+        const y = centerY + Math.sin(rads * i) * (radius + val * 0.8);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = visualizerColor;
+      ctx.stroke();
+
+      // inner glowing circle
+      const avgVal = dataArray.reduce((acc, curr) => acc + curr, 0) / bufferLength;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius + avgVal * 0.2, 0, 2 * Math.PI);
+      ctx.fillStyle = visualizerColor.replace('0.8', '0.2').replace('1)', '0.2)'); // make it transparent
+      ctx.fill();
+
+    } else if (visualizerType === 'geometric') {
+      const avg = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
+      const size = 100 + avg;
+      const t = Date.now() / 1000 * speed;
+      ctx.save();
+      ctx.translate(1080 / 2, 1080 / 2);
+      ctx.rotate(t * 0.5);
+      
+      for(let i = 0; i < 4; i++) {
+        ctx.rotate(Math.PI / 2);
+        ctx.beginPath();
+        ctx.rect(-size, -size, size * 2, size * 2);
+        ctx.strokeStyle = visualizerColor;
+        ctx.lineWidth = 4 + avg * 0.05;
+        ctx.stroke();
+      }
+      ctx.restore();
     }
 
     // Draw Lyrics if enabled

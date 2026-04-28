@@ -47,6 +47,8 @@ const App: React.FC = () => {
   const [newComment, setNewComment] = useState<{timeCode: string, text: string}>({timeCode: '0:00', text: ''});
   const [isRhymeOpen, setIsRhymeOpen] = useState(false);
   const [albums, setAlbums] = useState<{id: string, name: string, songs: string[]}[]>([{id: '1', name: 'My First EP', songs: []}]);
+  const [showAlbumModal, setShowAlbumModal] = useState<string | null>(null);
+  const [newAlbumName, setNewAlbumName] = useState('');
 
   const [prompt, setPrompt] = useState('');
   const [isPromptManual, setIsPromptManual] = useState(false);
@@ -59,7 +61,7 @@ const App: React.FC = () => {
   const [isResultPlaying, setIsResultPlaying] = useState<string | null>(null);
   const [encodingVideoId, setEncodingVideoId] = useState<string | null>(null);
   const [encodingProgress, setEncodingProgress] = useState(0);
-  const [videoSettings, setVideoSettings] = useState<{type: 'bars'|'waveform'|'particles', color: string, density: number, speed: number}>({ type: 'waveform', color: '#ff2d55', density: 1, speed: 1 });
+  const [videoSettings, setVideoSettings] = useState<{type: 'bars'|'waveform'|'particles'|'circular'|'geometric', color: string, density: number, speed: number, animationStyle: 'pulsing'|'spinning'|'flowing'}>({ type: 'waveform', color: '#ff2d55', density: 1, speed: 1, animationStyle: 'flowing' });
   const [selectedImages, setSelectedImages] = useState<{data: string, mimeType: string, previewUrl: string}[]>([]);
   const [isTriggering, setIsTriggering] = useState(false);
 
@@ -85,6 +87,14 @@ const App: React.FC = () => {
     if (autosave) {
       setPrompt(autosave);
       setIsPromptManual(true);
+    }
+    const storedFeedbacks = localStorage.getItem('lunara_feedbacks');
+    if (storedFeedbacks) {
+      try { setFeedbacks(JSON.parse(storedFeedbacks)); } catch(e) {}
+    }
+    const storedComments = localStorage.getItem('lunara_comments');
+    if (storedComments) {
+      try { setSongComments(JSON.parse(storedComments)); } catch(e) {}
     }
   }, []);
 
@@ -144,7 +154,9 @@ const App: React.FC = () => {
   };
 
   const handleFeedback = (id: string, fb: 'like' | 'dislike') => {
-    setFeedbacks(prev => ({ ...prev, [id]: prev[id] === fb ? null : fb }));
+    const nextFeedbacks = { ...feedbacks, [id]: feedbacks[id] === fb ? null : fb };
+    setFeedbacks(nextFeedbacks);
+    localStorage.setItem('lunara_feedbacks', JSON.stringify(nextFeedbacks));
   };
 
   // Helper Mode States
@@ -458,6 +470,24 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleSaveVersion = (result: SongResult) => {
+    const newVersion: SongResult = {
+      ...result,
+      id: Math.random().toString(36).substring(7),
+      title: `${result.title || 'Lunara'} (Version)`,
+      createdAt: new Date().toISOString(),
+    };
+    setGen(prev => ({...prev, results: [newVersion, ...prev.results]}));
+    
+    // Copy the current tempo and pitch if they exist
+    if (tempoLevels[result.id]) {
+        setTempoLevels(prev => ({...prev, [newVersion.id]: prev[result.id]}));
+    }
+    if (pitchLevels[result.id]) {
+        setPitchLevels(prev => ({...prev, [newVersion.id]: prev[result.id]}));
+    }
+  };
+
   const handleMastering = (id: string, currentStatus: string) => {
     if (currentStatus === 'processing' || currentStatus === 'done') return;
     setMasteringStatus(prev => ({ ...prev, [id]: 'processing' }));
@@ -482,7 +512,8 @@ const App: React.FC = () => {
       videoSettings.type,
       videoSettings.color,
       videoSettings.density,
-      videoSettings.speed
+      videoSettings.speed,
+      videoSettings.animationStyle
     );
   };
 
@@ -963,29 +994,50 @@ const App: React.FC = () => {
                                       </button>
                                       <div className="p-3 border-t border-gray-50 bg-gray-50/50">
                                         <div className="text-[9px] font-bold uppercase tracking-wider text-gray-500 mb-2">Video Style</div>
-                                        <div className="flex gap-1 mb-2">
-                                          {['bars', 'waveform', 'particles'].map(t => (
-                                            <button key={t} onClick={(e) => { e.stopPropagation(); setVideoSettings(s => ({ ...s, type: t as any })); }} className={`flex-1 py-1 rounded text-[9px] font-bold capitalize border ${videoSettings.type === t ? 'border-blue-500 bg-blue-50 text-blue-600' : 'border-gray-200 bg-white text-gray-500'}`}>
+                                        <div className="flex flex-wrap gap-1 mb-2">
+                                          {['bars', 'waveform', 'particles', 'circular', 'geometric'].map(t => (
+                                            <button key={t} onClick={(e) => { e.stopPropagation(); setVideoSettings(s => ({ ...s, type: t as any })); }} className={`flex-1 min-w-[30%] py-1 rounded text-[9px] font-bold capitalize border ${videoSettings.type === t ? 'border-blue-500 bg-blue-50 text-blue-600' : 'border-gray-200 bg-white text-gray-500'}`}>
                                               {t}
                                             </button>
                                           ))}
                                         </div>
                                         <div className="space-y-4">
-                                          <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-wider text-gray-500">
-                                            Color
-                                            <input type="color" value={videoSettings.color} onChange={(e) => setVideoSettings(s => ({...s, color: e.target.value})) } onClick={e => e.stopPropagation()} className="w-6 h-6 p-0 border-0 rounded cursor-pointer shrink-0" />
+                                          <div className="flex flex-col gap-2">
+                                            <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-wider text-gray-500">
+                                              Color Palette
+                                              <input type="color" value={videoSettings.color} onChange={(e) => setVideoSettings(s => ({...s, color: e.target.value})) } onClick={e => e.stopPropagation()} className="w-6 h-6 p-0 border-0 rounded cursor-pointer shrink-0" />
+                                            </div>
+                                            <div className="flex gap-2">
+                                                {['#ff2d55', '#32d74b', '#0a84ff', '#ff9f0a', '#bf5af2'].map(c => (
+                                                  <button key={c} onClick={(e) => { e.stopPropagation(); setVideoSettings(s => ({...s, color: c})); }} className={`w-4 h-4 rounded-full border-2 ${videoSettings.color === c ? 'border-gray-900' : 'border-transparent'}`} style={{ backgroundColor: c }} />
+                                                ))}
+                                            </div>
                                           </div>
+                                          
+                                          <div className="flex flex-col gap-2">
+                                            <div className="text-[9px] font-bold uppercase tracking-wider text-gray-500">Animation Style</div>
+                                            <div className="flex gap-1">
+                                              {['pulsing', 'spinning', 'flowing'].map(style => (
+                                                <button key={style} onClick={(e) => { e.stopPropagation(); setVideoSettings(s => ({ ...s, animationStyle: style as any })); }} className={`flex-1 py-1 rounded text-[9px] font-bold capitalize border ${videoSettings.animationStyle === style ? 'border-indigo-500 bg-indigo-50 text-indigo-600' : 'border-gray-200 bg-white text-gray-500'}`}>
+                                                  {style}
+                                                </button>
+                                              ))}
+                                            </div>
+                                          </div>
+
                                           {videoSettings.type === 'particles' && (
                                             <>
-                                              <div className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-gray-500">
+                                              <div className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-gray-500 mt-2">
                                                 <span>Density ({videoSettings.density.toFixed(1)}x)</span>
                                                 <input type="range" min="0.1" max="5" step="0.1" value={videoSettings.density} onChange={(e) => setVideoSettings(s => ({...s, density: parseFloat(e.target.value)}))} onClick={e => e.stopPropagation()} className="w-full" />
                                               </div>
+                                            </>
+                                          )}
+                                          {(videoSettings.type === 'particles' || videoSettings.type === 'geometric') && (
                                               <div className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-gray-500">
-                                                <span>Speed ({videoSettings.speed.toFixed(1)}x)</span>
+                                                <span>Anim Speed ({videoSettings.speed.toFixed(1)}x)</span>
                                                 <input type="range" min="0.1" max="5" step="0.1" value={videoSettings.speed} onChange={(e) => setVideoSettings(s => ({...s, speed: parseFloat(e.target.value)}))} onClick={e => e.stopPropagation()} className="w-full" />
                                               </div>
-                                            </>
                                           )}
                                         </div>
                                       </div>
@@ -1015,6 +1067,10 @@ const App: React.FC = () => {
                                   <History className="w-3.5 h-3.5" />
                                   Remix
                                 </button>
+                                <button onClick={(e) => { e.stopPropagation(); handleSaveVersion(result); }} className="px-4 py-2.5 rounded-xl text-xs font-bold transition-all border bg-white text-gray-600 border-gray-200 hover:bg-gray-50 shadow-sm flex items-center gap-2" title="Save as a new version with current pitch/tempo">
+                                  <Layers className="w-3.5 h-3.5" />
+                                  Save Version
+                                </button>
                                 <button onClick={(e) => { e.stopPropagation(); handleMastering(result.id, masteringStatus[result.id] || 'idle'); }} disabled={masteringStatus[result.id] === 'processing'} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border ${masteringStatus[result.id] === 'done' ? 'bg-indigo-500 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50 shadow-sm'} flex items-center gap-2`}>
                                   <Wand2 className="w-3.5 h-3.5" />
                                   {masteringStatus[result.id] === 'processing' ? 'Mastering...' : masteringStatus[result.id] === 'done' ? 'Mastered' : 'AI Master'}
@@ -1023,7 +1079,7 @@ const App: React.FC = () => {
                                   <Share className="w-3.5 h-3.5" />
                                   Share
                                 </button>
-                                <button onClick={(e) => { e.stopPropagation(); setAlbums(prev => prev.map(a => a.id === '1' ? {...a, songs: [...new Set([...a.songs, result.id])]} : a)); alert('Added to My First EP!'); }} className="px-4 py-2.5 rounded-xl text-xs font-bold transition-all border bg-white text-gray-600 border-gray-200 hover:bg-gray-50 shadow-sm flex items-center gap-2">
+                                <button onClick={(e) => { e.stopPropagation(); setShowAlbumModal(result.id); }} className="px-4 py-2.5 rounded-xl text-xs font-bold transition-all border bg-white text-gray-600 border-gray-200 hover:bg-gray-50 shadow-sm flex items-center gap-2">
                                   <FolderPlus className="w-3.5 h-3.5" />
                                   Add to Album
                                 </button>
@@ -1064,7 +1120,9 @@ const App: React.FC = () => {
                               <label className="text-[10px] uppercase font-bold text-gray-400 mb-1 block">Comment</label>
                               <input type="text" value={newComment.text} onChange={e => setNewComment({...newComment, text: e.target.value})} onKeyDown={e => {
                                 if (e.key === 'Enter' && newComment.text) {
-                                  setSongComments(prev => ({...prev, [result.id]: [...(prev[result.id] || []), newComment]}));
+                                  const nextComments = {...songComments, [result.id]: [...(songComments[result.id] || []), newComment]};
+                                  setSongComments(nextComments);
+                                  localStorage.setItem('lunara_comments', JSON.stringify(nextComments));
                                   setNewComment({timeCode: '0:00', text: ''});
                                 }
                               }} className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none" placeholder="Add a note... (Press Enter)" />
@@ -1192,6 +1250,57 @@ const App: React.FC = () => {
                 })}
               </div>
            </div>
+        </div>
+      )}
+
+      {showAlbumModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowAlbumModal(null)}>
+          <div className="bg-white rounded-3xl p-6 shadow-2xl max-w-sm w-full mx-auto animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold tracking-tight text-gray-900">Add to Album</h3>
+              <button onClick={() => setShowAlbumModal(null)} className="text-gray-400 hover:text-gray-900 transition-colors p-1 rounded-full hover:bg-gray-100">
+                <Icons.X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4 max-h-[40vh] overflow-y-auto custom-scrollbar">
+              {albums.map((album) => (
+                <button
+                  key={album.id}
+                  onClick={() => {
+                    setAlbums(prev => prev.map(a => a.id === album.id ? { ...a, songs: [...new Set([...a.songs, showAlbumModal])] } : a));
+                    setShowAlbumModal(null);
+                  }}
+                  className="w-full flex items-center justify-between p-4 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all text-left"
+                >
+                  <div className="font-semibold text-gray-800">{album.name}</div>
+                  <div className="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-lg">{album.songs.length} Tracks</div>
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-gray-100 gap-3 flex">
+              <input 
+                type="text" 
+                value={newAlbumName} 
+                onChange={e => setNewAlbumName(e.target.value)}
+                placeholder="New Album Name" 
+                className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              />
+              <button 
+                disabled={!newAlbumName.trim()}
+                onClick={() => {
+                  const newId = Math.random().toString(36).substring(7);
+                  setAlbums(prev => [...prev, { id: newId, name: newAlbumName.trim(), songs: [showAlbumModal] }]);
+                  setNewAlbumName('');
+                  setShowAlbumModal(null);
+                }}
+                className="px-4 py-2 bg-gray-900 text-white rounded-xl font-bold text-sm tracking-wide disabled:opacity-50"
+              >
+                Create
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
