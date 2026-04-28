@@ -26,11 +26,28 @@ import { parseModelOutput, generateSongTitle, generateCoverArt } from './src/ser
 import { getRandomItem } from './src/utils/helpers';
 import { motion } from 'motion/react';
 import { PromptBuilder, HelperSection } from './src/components/PromptBuilder';
+import { CommunityFeed } from './src/components/CommunityFeed';
+import { ThreeDVisualizer } from './src/components/ThreeDVisualizer';
 import { handleDownloadMidi } from './src/utils/midiUtils';
-import { ThumbsUp, ThumbsDown, Music, Undo2, Redo2, Layers, Wand2, History, Moon, Sun, Search, Share } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Music, Undo2, Redo2, Layers, Wand2, History, Moon, Sun, Search, Share, MessageCircle, Mic2, FolderPlus } from 'lucide-react';
+
+const PLUGINS = [
+  { id: 'vintage-synth', name: 'Vintage Synth' },
+  { id: 'tube-amp', name: 'Tube Amp' },
+  { id: '808-drums', name: '808 Drum Machine' },
+  { id: 'lofi-vinyl', name: 'Lo-Fi Vinyl' },
+  { id: 'tape-delay', name: 'Tape Delay' },
+];
 
 const App: React.FC = () => {
+  const [viewMode, setViewMode] = useState<'create' | 'community'>('create');
   const [hasStarted, setHasStarted] = useState(false);
+  const [selectedPlugins, setSelectedPlugins] = useState<string[]>([]);
+  const [songComments, setSongComments] = useState<Record<string, {timeCode: string, text: string}[]>>({});
+  const [newComment, setNewComment] = useState<{timeCode: string, text: string}>({timeCode: '0:00', text: ''});
+  const [isRhymeOpen, setIsRhymeOpen] = useState(false);
+  const [albums, setAlbums] = useState<{id: string, name: string, songs: string[]}[]>([{id: '1', name: 'My First EP', songs: []}]);
+
   const [prompt, setPrompt] = useState('');
   const [isPromptManual, setIsPromptManual] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -352,7 +369,11 @@ const App: React.FC = () => {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       let lyricInstruction = activeLyricsOption === 'Instrumental' ? "IMPORTANT: This track MUST be strictly INSTRUMENTAL." : 
                           activeLyricsOption === 'Custom' ? `\nUse these exact lyrics:\n ${activeCustomLyrics}` : "\nGenerate lyrics with precise [seconds:] timing markers.";
-      const contextPart = activePrompt.trim() ? `\nContext: "${activePrompt}".` : '';
+      
+      const pluginNames = selectedPlugins.map(id => Object.values(PLUGINS).find(p => p.id === id)?.name).filter(Boolean);
+      const pluginString = pluginNames.length > 0 ? ` featuring ${pluginNames.join(', ')}` : '';
+      const contextPart = activePrompt.trim() || pluginString ? `\nContext: "${activePrompt}${pluginString}".` : '';
+      
       const promptText = `Generate a ${activeDuration === 'Pro' ? 'full-length' : '30-second'} track.${contextPart} ${ lyricInstruction }.`;
       
       // Save the full prompt for display later
@@ -572,6 +593,10 @@ const App: React.FC = () => {
           <div className="w-8 h-8 music-gradient rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-md">LN</div>
           <span className="font-semibold text-lg tracking-tight">Lunara Studio</span>
         </div>
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 bg-gray-100 p-1 rounded-full">
+          <button onClick={() => setViewMode('create')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${viewMode === 'create' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}>Create</button>
+          <button onClick={() => setViewMode('community')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${viewMode === 'community' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}>Community</button>
+        </div>
         <div className="flex items-center gap-4">
           <div className="relative">
              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -591,7 +616,11 @@ const App: React.FC = () => {
       </nav>
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-6 pt-12">
-        <section className="text-center mb-16 space-y-4">
+        {viewMode === 'community' ? (
+          <CommunityFeed />
+        ) : (
+          <>
+            <section className="text-center mb-16 space-y-4">
           <motion.h1 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -767,7 +796,23 @@ const App: React.FC = () => {
 
             {lyricsOption === 'Custom' && (
               <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                <label className="text-xs font-bold uppercase tracking-widest text-gray-400 ml-1">Custom Composition Lyrics</label>
+                <div className="flex justify-between items-end mb-1">
+                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400 ml-1">Custom Composition Lyrics</label>
+                  <button onClick={() => setIsRhymeOpen(!isRhymeOpen)} className={`text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 transition-colors ${isRhymeOpen ? 'text-purple-600' : 'text-purple-400 hover:text-purple-600'}`}>
+                    <Mic2 className="w-3.5 h-3.5" />
+                    AI Rhyme Assistant
+                  </button>
+                </div>
+                {isRhymeOpen && (
+                  <div className="p-4 bg-purple-50 border border-purple-100 rounded-2xl text-xs text-purple-700 flex gap-4 items-start">
+                    <Icons.Sparkles className="w-5 h-5 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold mb-1">Rhyme & Syllable Suggestions (Mock)</p>
+                      <p className="opacity-80">Suggestions: <i>fly, high, sky, lie</i></p>
+                      <p className="opacity-80 mt-1">Syllable matches: <i>in the sky (3), let it fly (3)</i></p>
+                    </div>
+                  </div>
+                )}
                 <textarea
                   value={customLyrics}
                   onChange={(e) => setCustomLyrics(e.target.value)}
@@ -776,6 +821,21 @@ const App: React.FC = () => {
                 />
               </div>
             )}
+
+            <div className="space-y-3">
+              <label className="text-xs font-bold uppercase tracking-widest text-gray-400 ml-1">Instruments & Plugins</label>
+              <div className="flex flex-wrap gap-2">
+                {PLUGINS.map(plugin => (
+                  <button 
+                    key={plugin.id} 
+                    onClick={() => setSelectedPlugins(prev => prev.includes(plugin.id) ? prev.filter(p => p !== plugin.id) : [...prev, plugin.id])}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${selectedPlugins.includes(plugin.id) ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-sm' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                  >
+                    {plugin.name}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             <motion.button 
               whileHover={(!prompt.trim() && selectedImages.length === 0) || CONFIG.IS_MAINTENANCE_MODE ? {} : { scale: 1.01 }}
@@ -963,6 +1023,10 @@ const App: React.FC = () => {
                                   <Share className="w-3.5 h-3.5" />
                                   Share
                                 </button>
+                                <button onClick={(e) => { e.stopPropagation(); setAlbums(prev => prev.map(a => a.id === '1' ? {...a, songs: [...new Set([...a.songs, result.id])]} : a)); alert('Added to My First EP!'); }} className="px-4 py-2.5 rounded-xl text-xs font-bold transition-all border bg-white text-gray-600 border-gray-200 hover:bg-gray-50 shadow-sm flex items-center gap-2">
+                                  <FolderPlus className="w-3.5 h-3.5" />
+                                  Add to Album
+                                </button>
                                 <button onClick={(e) => { e.stopPropagation(); handleFeedback(result.id, 'like'); }} className={`p-3 rounded-xl transition-colors shadow-sm ${feedbacks[result.id] === 'like' ? 'bg-green-100 text-green-600' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'}`}><ThumbsUp className="w-4 h-4" /></button>
                                 <button onClick={(e) => { e.stopPropagation(); handleFeedback(result.id, 'dislike'); }} className={`p-3 rounded-xl transition-colors shadow-sm ${feedbacks[result.id] === 'dislike' ? 'bg-red-100 text-red-600' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'}`}><ThumbsDown className="w-4 h-4" /></button>
                               </div>
@@ -987,6 +1051,37 @@ const App: React.FC = () => {
                         </div>
                       )}
 
+                      {/* Time-stamped Comments */}
+                      <div className="mb-6 space-y-3">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Time-stamped Comments</label>
+                        <div className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-sm">
+                          <div className="flex gap-4 items-end mb-4">
+                            <div className="w-20">
+                              <label className="text-[10px] uppercase font-bold text-gray-400 mb-1 block">Time</label>
+                              <input type="text" value={newComment.timeCode} onChange={e => setNewComment({...newComment, timeCode: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:border-blue-500 focus:outline-none" placeholder="0:45" />
+                            </div>
+                            <div className="flex-1">
+                              <label className="text-[10px] uppercase font-bold text-gray-400 mb-1 block">Comment</label>
+                              <input type="text" value={newComment.text} onChange={e => setNewComment({...newComment, text: e.target.value})} onKeyDown={e => {
+                                if (e.key === 'Enter' && newComment.text) {
+                                  setSongComments(prev => ({...prev, [result.id]: [...(prev[result.id] || []), newComment]}));
+                                  setNewComment({timeCode: '0:00', text: ''});
+                                }
+                              }} className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none" placeholder="Add a note... (Press Enter)" />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            {(songComments[result.id] || []).map((c, i) => (
+                              <div key={i} className="flex gap-3 items-center text-sm p-2 rounded-lg hover:bg-gray-50">
+                                <span className="px-2 py-1 bg-blue-100 text-blue-700 font-mono text-xs rounded-md">{c.timeCode}</span>
+                                <span className="text-gray-700">{c.text}</span>
+                              </div>
+                            ))}
+                            {!(songComments[result.id] || []).length && <div className="text-sm text-gray-400 italic">No comments yet.</div>}
+                          </div>
+                        </div>
+                      </div>
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 pb-2">
                         <div className="space-y-3">
                           <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Composition Lyrics</label>
@@ -997,6 +1092,14 @@ const App: React.FC = () => {
                           <div ref={el => { consoleRefs.current[result.id] = el; }} className="bg-[#1c1c1e] rounded-[32px] p-8 h-[240px] overflow-y-auto font-mono text-[11px] text-[#32d74b] space-y-1 shadow-2xl border border-gray-800/50 custom-scrollbar">{result.logs.map((log, i) => <div key={i} className="opacity-80 leading-relaxed">{log}</div>)}</div>
                         </div>
                       </div>
+
+                      {/* Advanced 3D Visualizer */}
+                      <div className="mt-8 space-y-3">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">3D Music Visualizer Studio</label>
+                        <div className="relative w-full h-[400px] bg-black rounded-[32px] overflow-hidden shadow-2xl">
+                          <ThreeDVisualizer intensity={isResultPlaying === result.id ? 0.8 : 0} speed={tempoLevels[result.id] ?? 1} />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1004,6 +1107,8 @@ const App: React.FC = () => {
             );
           })}
         </div>
+        </>
+        )}
       </main>
 
       {queue.length > 0 && (
