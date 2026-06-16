@@ -2,12 +2,12 @@
 
 <br />
 
-<img src="https://img.shields.io/badge/Lunara-v1.0-000000?style=for-the-badge&logoColor=white" alt="version" />
-<img src="https://img.shields.io/badge/Built_with-React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="react" />
-<img src="https://img.shields.io/badge/TypeScript-3178c6?style=for-the-badge&logo=typescript&logoColor=white" alt="typescript" />
-<img src="https://img.shields.io/badge/TailwindCSS-v3-38BDF8?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="tailwind" />
-<img src="https://img.shields.io/badge/Vite-Build_Tool-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="vite" />
-<img src="https://img.shields.io/badge/Gemini_AI-Powered-8E75B2?style=for-the-badge&logo=googlebard&logoColor=white" alt="gemini" />
+<img src="https://img.shields.io/badge/Status-Live-22c55e?style=for-the-badge&logoColor=white" alt="status" />
+<img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="react" />
+<img src="https://img.shields.io/badge/TypeScript-5.8-3178c6?style=for-the-badge&logo=typescript&logoColor=white" alt="typescript" />
+<img src="https://img.shields.io/badge/Tailwind_CSS-4-38BDF8?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="tailwind" />
+<img src="https://img.shields.io/badge/Gemini_AI-Live-8E75B2?style=for-the-badge&logo=googlebard&logoColor=white" alt="gemini" />
+<img src="https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="vercel" />
 
 <br /><br />
 
@@ -20,225 +20,156 @@
  ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝    ╚═╝  ╚═╝╚═╝  ╚═╝
 ```
 
-### **One Interface. Infinite Melodies.** — Craft precise music prompts, generate, and visualize.
+### **Lunara Studio** — Tek Arayüz. Sınırsız Melodi. Yapay Zekayla Profesyonel Müzik Üretimi.
 
-[Live App](#) · [Report Bug](#) · [Request Feature](#)
+**Yapay zeka ses motoru** · Canlı görselleştirme · Katmanlı kompozisyonlar · Tek tıklamayla video ihracı.
+
+[🚀 Canlı Demo](https://lunara-studio-liard.vercel.app/) · [⚡ Gemini AI](https://deepmind.google/technologies/gemini/) · [☁️ Vercel](https://vercel.com)
 
 </div>
 
 ---
 
-## ✦ What is Lunara?
+## ✦ Genel Bakış (Overview)
 
-**Lunara** is an advanced AI Music Prompt Builder & Visualization platform. Writing the perfect prompt for AI music generators can be a chaotic process of trial and error. Lunara steps in to provide a structured, inspiring, and seamless workflow.
+**Lunara Studio**, yapay zeka destekli müzik üretim sürecinizi baştan sona kolaylaştıran, zengin tasarıma sahip gelişmiş bir prompt oluşturucu ve görselleştirme platformudur. Yapay zeka müzik üreticileri için mükemmel melodi ve tınıyı yakalamak genellikle karmaşık denemeler gerektirir; Lunara bu noktada devreye girerek yapılandırılmış ve ilham verici bir iş akışı sunar.
 
-Stop tracking your prompt ideas in messy text files. With Lunara, you can build dynamic song directives, get AI-powered prompt suggestions, maintain a history of your ideas, queue up tracks, and export generated songs as stunning videos with custom visualizers. 
-
----
-
-<details>
-<summary><strong>🇹🇷 Türkçe Açıklama</strong></summary>
-
-<br />
-
-**Lunara**, yapay zeka destekli müzik üretim sürecinizi kolaylaştıran gelişmiş bir prompt oluşturucu ve görselleştirme platformudur. Yapay zeka müzik üreticileri için (Suno, Udio vb.) mükemmel promptu yazmak genellikle deneme yanılmalarla dolu karmaşık bir süreçtir; Lunara bu noktada devreye girerek yapılandırılmış ve kusursuz bir iş akışı sunar.
-
-Prompt fikirlerinizi not defterlerinde saklamayı bırakın. Lunara ile dinamik şarkı yönergeleri oluşturabilir, Gemini AI destekli prompt önerileri alabilir, geçmiş fikirlerinizi geri alıp/yineleyebilir (undo/redo), şarkılarınızı sıraya ekleyebilir ve ürettiğiniz müzikleri dalga formları (waveform) veya parçacık (particle) efektleriyle özelleştirilmiş videolar olarak dışa aktarabilirsiniz.
-
-</details>
+Prompt fikirlerinizi not defterlerinde saklamayı bırakın. Lunara ile dinamik şarkı yönergeleri oluşturabilir, Gemini AI destekli prompt önerileri alabilir, geçmiş fikirlerinizi geri alıp/yineleyebilir (undo/redo), şarkılarınızı sıraya ekleyebilir, albümler halinde gruplayabilir ve ürettiğiniz müzikleri dalga formları (waveform) veya parçacık (particle) efektleriyle özelleştirilmiş videolar olarak dışa aktarabilirsiniz.
 
 ---
 
-## ⚡ Features
+## ✦ English Description
 
-| Feature | Description |
-|---------|-------------|
-| 🎛️ **Prompt Builder** | Structured section builder for moods, genres, themes, BPM, and Scales. |
-| 🤖 **AI Suggestions** | Gemini-powered intelligent prompt suggestions based on your selected attributes. |
-| 🎥 **Video Export** | Render audio as standard WebM videos with customizable Waveform, Bars, and Particle visualizers. |
-| 🕰️ **History & Auto-save** | Undo/Redo capabilities for prompts. Never lose your creative sparks with local auto-save. |
-| 🎵 **Queue System** | Add your generated tracks to a queue and let them play back seamlessly. |
-| 🎹 **MIDI Support** | Extract and download Mock MIDI files directly from the app interface. |
-| 🖼️ **Image Integration** | Upload reference images as part of your prompt and visualizer context. |
-| ⚡ **Responsive UI** | Beautiful, modern "Glassmorphism" interface optimized for speed and creative flow. |
+**Lunara Studio** is a next-generation AI music generation helper, prompt engineer, and interactive visualization platform. Crafting the perfect prompt for audio models can be a chaotic process. Lunara streamlines this journey by providing an elegant, feature-rich interface to build prompts, get AI-powered recommendations, manage generation history, queue playback, and export songs into videos with reactive visualizers.
+
+All data, prompt history, and user settings are kept locally, ensuring absolute privacy while allowing seamless integration with the Google Gemini API for creative prompts and high-fidelity audio output.
 
 ---
 
-## 🖼️ Screenshots
-
-> *(Coming soon — High-quality mockups of the Lunara interface)*
-
----
-
-## 🛠️ Tech Stack
-
-```
-Frontend        →  React 18 · TypeScript (strict) · Vite
-Styling         →  Tailwind CSS v3 · Lucide React (Icons)
-AI Integration  →  Google Gemini API (@google/genai)
-Canvas API      →  Real-time audio visualization (Bars, Waveform, Particles)
-Storage         →  Local Storage (Auto-save, prompt history)
-Code Quality    →  ESLint
-```
+<div align="center">
+<img src="docs/screenshots/landing.png" alt="Lunara Giriş Ekranı" width="49%" />
+<img src="docs/screenshots/studio.png" alt="Lunara Stüdyo Arayüzü" width="49%" />
+</div>
 
 ---
 
-## 🏗️ Architecture
+## ⚡ Öne Çıkan Özellikler (Features)
 
-```
-┌────────────────────────────────────────────────────────────────┐
-│                          LUNARA CLIENT                         │
-│                                                                │
-│  ┌───────────────┐  ┌───────────────┐  ┌─────────────────────┐│
-│  │ Prompt Engine │  │ Queue System  │  │ Audio/Video Render  ││
-│  │ (History/Sync)│  │ (State Mngt)  │  │ (Canvas API)        ││
-│  └───────────────┘  └───────────────┘  └─────────────────────┘│
-└───────────────────────────┬────────────────────────────────────┘
-                            │ (Client-side API requests)
-         ┌──────────────────┼──────────────────┐
-         │                                     │
-┌────────────────┐                     ┌───────────────┐
-│ Google Gemini  │                     │ Local Storage │
-│ (AI Prompts &  │                     │ (Auto-save &  │
-│  Suggestions)  │                     │  User History)│
-└────────────────┘                     └───────────────┘
-```
+| Özellik | Açıklama |
+|--------|----------|
+| 🎛️ **Prompt Builder** | Moods, genres, themes, BPM ve Scales içeren yapay zekaya uygun yönerge yapıcı. |
+| 🤖 **Gemini AI Önerileri** | Seçtiğiniz müzik özelliklerine göre en iyi promptu üreten Gemini destekli öneri motoru. |
+| 🎥 **Video Dışa Aktarım** | Waveform, Bars ve Particle görselleştiricileriyle audio dosyalarını doğrudan WebM olarak kaydetme. |
+| 🕰️ **Undo/Redo & Geçmiş** | Prompt değişikliklerinde sınırsız geri alma/yineleme ve yerel otomatik kaydetme desteği. |
+| 🎵 **Gelişmiş Oynatma Kuyruğu** | Üretilen parçaları kuyruğa ekleme, sürükleme, sıralama ve kesintisiz arka arkaya dinleme. |
+| 🎹 **MIDI Desteği** | Üretilen şarkının akor şemasını DAW yazılımlarında kullanmak üzere anında `.mid` olarak indirme. |
+| 🖼️ **Görsel Bağlam** | Prompt ile birlikte yapay zekaya girdi olarak verilecek referans resimleri yükleme. |
+| 🌌 **3D Canlı Görselleştirici** | React Three Fiber tabanlı, çalan müziğin ritmine ve temposuna duyarlı dinamik 3D küre. |
 
 ---
 
-## 📐 Project Structure
+<div align="center">
+<img src="docs/screenshots/demo.webp" alt="Müzik Oynatma ve 3D Görselleştirici Akışı" width="80%" />
+</div>
+
+---
+
+## 🛠️ Teknolojiler (Tech Stack)
 
 ```text
-Lunara/
+Arayüz         →  React 19 (Strict Mode) · TypeScript · Vite 6
+Stil           →  Tailwind CSS v4 · Glassmorphism tasarımlar
+Yapay Zeka     →  Google GenAI SDK (@google/genai)
+Ses Modelleri  →  lyria-3-pro-preview · lyria-3-clip-preview
+Görsel Üretim  →  gemini-2.5-flash-image
+3D Render      →  Three.js · @react-three/fiber · @react-three/drei
+Yerel Depolama →  localStorage (otomatik kayıt & geçmiş)
+Yayınlama      →  Vercel (SPA routing desteğiyle)
+```
+
+---
+
+## 🔄 Çalışma Mantığı (Data Flow)
+
+```text
+                        ┌─ Referans Görseller (Camera API)
+  Kullanıcı Girdileri ──▶├─ Prompt Şablonları (Helper Mode)  ──▶  Google GenAI API
+                         └─ Özel Akor ve Sözler (Lyrics)         (Model: Lyria-3)
+                                                                       │
+  Kuyruk & Albüm  ◀── Video/MIDI İhracı · 3D Visualizer ◀──────────────┘
+  (Local Storage)     (Canvas / R3F / MediaRecorder)
+```
+
+1. **Prompt Hazırlama**: Kullanıcı şablonlar aracılığıyla ya da serbest metin olarak müzik direktiflerini belirler. AI Prompt Suggestion motoruyla alternatifler türetebilir.
+2. **Audio & Medya Sentezi**: Google GenAI SDK üzerinden Lyria ses modelleriyle parça oluşturulur. Paralel olarak şarkıya başlık ve 1:1 formatında albüm kapağı oluşturulur.
+3. **Müzik Oynatma & Efekt**: Çalan müzikle senkronize olan 3D küre ve dalga boyu analizörleri çalışır.
+4. **Kayıt ve İndirme**: Kullanıcı isterse parçayı `.wav` olarak, akorları `.mid` olarak, veya şarkı sözlerinin senkronize aktığı bir karaoke videosunu `.webm` olarak indirebilir.
+
+---
+
+## 📐 Proje Yapısı (Project Structure)
+
+```text
+LunaraStudio/
 ├── src/
 │   ├── components/
-│   │   ├── PromptBuilder.tsx      # Main interface for structuring prompts
-│   │   ├── ...
+│   │   ├── PromptBuilder.tsx      # Prompt şablonları oluşturan modül
+│   │   ├── ThreeDVisualizer.tsx   # React Three Fiber 3D görselleştirici
+│   │   ├── CommunityFeed.tsx      # Topluluk ve Firebase paylaşım ekranı
+│   │   └── SongCard.tsx           # Galeri şarkı kartı tasarımı
 │   ├── services/
-│   │   └── genaiService.ts        # Gemini API integration for AI suggestions
+│   │   └── genaiService.ts        # Gemini metin, görsel ve öneri servisleri
 │   ├── utils/
-│   │   ├── audioUtils.ts          # Audio decoding and formatting
-│   │   ├── videoUtils.ts          # Canvas rendering and MediaRecorder logic
-│   │   ├── midiUtils.ts           # Mock MIDI generation
-│   │   └── helpers.ts             # Generic utilities
-│   ├── App.tsx                    # Main application state and layout
-│   ├── index.css                  # Tailwind imports and base styles
-│   ├── main.tsx                   # React root entry point
-│   └── constants.tsx              # Icons, tooltips, configuration dictionaries
-├── index.html                     # Vite entry HTML
-├── package.json                   # Dependencies & Scripts
-├── tailwind.config.js             # Tailwind configuration
-├── vite.config.ts                 # Vite bundler configuration
-└── .env.example                   # Environment variable template
+│   │   ├── audioUtils.ts          # Base64 ses çözme yardımcıları
+│   │   ├── midiUtils.ts           # MIDI dosya yazma ve indirme motoru
+│   │   ├── lyricsUtils.ts         # Şarkı sözleri zamanlama ayıklayıcısı
+│   │   └── videoUtils.ts          # Canvas tabanlı WebM video kayıt sentezleyici
+│   ├── config.ts                  # Lyria model ve arayüz konfigürasyonları
+│   └── lib/
+│       └── firebase.ts            # Auth & veritabanı istemcisi
+├── App.tsx                        # Ana uygulama bileşeni ve durum yönetimi
+├── vercel.json                    # SPA yönlendirmeleri için Vercel ayarları
+├── package.json                   # Bağımlılıklar ve derleme betikleri
+└── index.html                     # Arayüz giriş noktası
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Kurulum ve Çalıştırma (Getting Started)
 
-### Prerequisites
-
+### Gereksinimler
 - Node.js `>= 18`
-- Google Gemini API Key
-
-### Local Development
+- Google Gemini API Anahtarı ([Google AI Studio](https://aistudio.google.com/))
 
 ```bash
-# Clone the repository
-git clone https://github.com/kutluhangil/Lunara.git
-cd Lunara
+# Projeyi klonlayın
+git clone https://github.com/kutluhangil/LunaraStudio.git
+cd LunaraStudio
 
-# Install dependencies
+# Bağımlılıkları yükleyin
 npm install
 
-# Configure environment
-cp .env.example .env
-# Add your Gemini API key:
-# VITE_GEMINI_API_KEY=your_api_key_here
-
-# Start the dev server
-npm run dev
+# Geliştirme sunucusunu başlatın
+npm run dev        # Tarayıcıda açın: http://localhost:3000
 ```
 
-App runs at `http://localhost:3000`.
-
-### Scripts
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Development server |
-| `npm run build` | Production build |
-| `npm run preview` | Preview production build |
-| `npm run lint` | ESLint check |
-
-### Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|:--------:|
-| `VITE_GEMINI_API_KEY` | Google Gemini API Key for prompt suggestions | ✓ |
-
----
-
-## 🔒 Data & Privacy
-
-All user prompts and generated history are stored **locally** on your device using `localStorage`. Lunara only sends data to the Google Gemini API when you explicitly request an "AI Prompt Suggestion". 
-
----
-
-## 🐳 Docker Deployment
-
-*(Not strictly required as Lunara is a client-side SPA, but can be served via Nginx)*
-
+### Derleme (Build)
 ```bash
-# Build the Vite Application
+# Production paketini hazırlayın
 npm run build
 
-# You can serve the /dist folder using any basic web server (e.g. Nginx, Caddy, Python http.server)
+# Yerel olarak test edin
+npm run preview
 ```
-
----
-
-## 🗺️ Roadmap
-
-- [x] Phase 1 — Core Prompt Builder with structured categories
-- [x] Phase 2 — Video Export with audio visualization 
-- [x] Phase 3 — Undo/Redo History & Auto-saving
-- [x] Phase 4 — Gemini AI Prompt Suggestions
-- [x] Phase 5 — Embedded Queue and Music Player
-- [ ] Phase 6 — Integration with true AI Music endpoints (Suno/Udio API wrappers)
-- [ ] Phase 7 — User Accounts (Supabase Auth) to sync prompts across devices
-- [ ] Phase 8 — Advanced Multi-track MIDI export
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open an issue or submit a pull request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for details.
 
 ---
 
 <div align="center">
 
-Built with precision by [kutluhangil](https://github.com/kutluhangil)
+Müzisyenler ve içerik üreticileri için ❤️ ile tasarlandı · **[kutluhangil](https://github.com/kutluhangil)**
 
 <br />
 
-**[lunara.app](#)**
-
-<br />
-
-*If you find this useful, consider giving it a ⭐*
+*Beğendiyseniz yıldız ⭐ bırakmayı unutmayın.*
 
 </div>
