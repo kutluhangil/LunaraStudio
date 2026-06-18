@@ -1,47 +1,46 @@
 /**
  * GenAI Service
  *
- * This module encapsulates all interactions with the Google GenAI SDK.
- * It provides functions for generating song titles, cover art, and the actual audio tracks.
- *
- * Use Cases:
- * - Requesting a short, evocative title based on music prompts and lyrics.
- * - Generating square cover art images based on the song's atmosphere.
- * - Streaming audio generation from the Lyria models.
+ * This module communicates with Vercel Serverless Functions to perform metadata generation tasks securely,
+ * hiding the Google Gemini API Key from the client.
  */
-import { GoogleGenAI, Modality } from "@google/genai";
-import { CONFIG } from '../config';
-import { logFunctionCall, logGenAiCall } from '../utils/logger';
+import { logFunctionCall } from '../utils/logger';
 
 /**
  * Parses the raw text output from the model to separate lyrics from metadata.
  * @param text The raw text output from the model.
  * @returns An object containing the separated lyrics and metadata.
  */
-export const suggestPrompts = async (topics: string): Promise<string[]> => {
-  logFunctionCall('suggestPrompts', { topics });
-  try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const prompt = `Based on these themes/moods/genres/details: "${topics}", suggest 3 creative, coherent, and evocative music generation prompts (1-2 sentences each). Return them separated by a pipe character "|". Do not include quotation marks or numbers in the output. Example output: An upbeat energetic synthwave track for late night driving | A melancholic lonely piano solo with rain sounds | A heavy aggressive trap beat with dark brass elements`;
-    const response = await ai.models.generateContent({
-      model: CONFIG.TEXT_MODEL,
-      contents: prompt,
-    });
-    logGenAiCall(CONFIG.TEXT_MODEL, prompt, {}, response);
-    const text = response.text?.trim() || "";
-    return text.split('|').map(s => s.trim()).filter(s => s.length > 0);
-  } catch (err) {
-    console.error("Failed to suggest prompts:", err);
-    return [];
-  }
-};
-
 export const parseModelOutput = (text: string): { lyrics: string, metadata: string } => {
   logFunctionCall('parseModelOutput', { textLength: text.length });
   const metaMarkers = /Caption:|Instruments:|Metadata:|Structure:|Description:|Mood:|mosic:|bpm:/i;
   const match = text.search(metaMarkers);
   if (match !== -1) return { lyrics: text.substring(0, match).trim(), metadata: text.substring(match).trim() };
   return { lyrics: text, metadata: '' };
+};
+
+/**
+ * Suggests creative prompts based on topics.
+ * @param topics The musical details/genres/moods.
+ */
+export const suggestPrompts = async (topics: string): Promise<string[]> => {
+  logFunctionCall('suggestPrompts', { topics });
+  try {
+    const res = await fetch('/api/generate-meta', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'suggest', data: { topics } }),
+    });
+    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    const text = data.result || "";
+    return text.split('|').map((s: string) => s.trim()).filter((s: string) => s.length > 0);
+  } catch (err) {
+    console.error("Failed to suggest prompts:", err);
+    return [];
+  }
 };
 
 /**
@@ -53,14 +52,16 @@ export const parseModelOutput = (text: string): { lyrics: string, metadata: stri
 export const generateSongTitle = async (musicPrompt: string, lyricContext: string): Promise<string> => {
   logFunctionCall('generateSongTitle', { musicPrompt, lyricContextLength: lyricContext.length });
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const prompt = `Based on this music prompt: "${musicPrompt}" and these lyrics: "${lyricContext.substring(0, 500)}", generate a catchy, evocative, short song title (3 words max). Return ONLY the title string, no quotes or extra text.`;
-    const response = await ai.models.generateContent({
-      model: CONFIG.TEXT_MODEL,
-      contents: prompt,
+    const res = await fetch('/api/generate-meta', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'title', data: { musicPrompt, lyricContext } }),
     });
-    logGenAiCall(CONFIG.TEXT_MODEL, prompt, {}, response);
-    return response.text?.trim() || "Untitled Track";
+    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    return data.result || "Untitled Track";
   } catch (err) {
     console.error("Failed to generate title:", err);
     return "Lyria Composition";
@@ -76,28 +77,17 @@ export const generateSongTitle = async (musicPrompt: string, lyricContext: strin
  */
 export const generateCoverArt = async (musicPrompt: string, lyricContext: string, title?: string): Promise<string | null> => {
   logFunctionCall('generateCoverArt', { musicPrompt, lyricContextLength: lyricContext.length, title });
-  const imagePrompt = `A high-quality, professional square song cover for a music track titled "${title || 'Music'}". Atmosphere: ${musicPrompt}. Context: ${ lyricContext.substring(0, 200) }. Abstract, cinematic aesthetic. IMPORTANT: Ignore any mention of BPM or musical scale in the prompt; do NOT print any numbers, BPM, or scale text on the image.`;
   try {
-    const imgGenAi = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const config = { imageConfig: { aspectRatio: "1:1" } };
-    const contents = { parts: [{ text: imagePrompt }] };
-    const imageResponse = await imgGenAi.models.generateContent({
-      model: CONFIG.IMAGE_MODEL,
-      contents,
-      config
+    const res = await fetch('/api/generate-meta', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'cover', data: { musicPrompt, lyricContext, title } }),
     });
-    logGenAiCall(CONFIG.IMAGE_MODEL, contents, config, imageResponse);
+    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
 
-    let base64Image = null;
-    if (imageResponse.candidates?.[0]?.content?.parts) {
-      for (const part of imageResponse.candidates[0].content.parts) {
-        if (part.inlineData) {
-          base64Image = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-          break;
-        }
-      }
-    }
-    return base64Image;
+    return data.result || null;
   } catch (imgErr) {
     console.error("Visual synthesis skipped.", imgErr);
     return null;
