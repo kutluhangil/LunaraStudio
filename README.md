@@ -1,175 +1,104 @@
 <div align="center">
 
-<br />
+<img src="docs/media/hero.svg" alt="Lunara Studio — the prompt builder choosing mood, genre, BPM and scale, a generated track with cover art, a pulsing sphere and timed lyrics" width="100%">
 
-<img src="https://img.shields.io/badge/Status-Live-22c55e?style=for-the-badge&logoColor=white" alt="status" />
-<img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="react" />
-<img src="https://img.shields.io/badge/TypeScript-5.8-3178c6?style=for-the-badge&logo=typescript&logoColor=white" alt="typescript" />
-<img src="https://img.shields.io/badge/Tailwind_CSS-4-38BDF8?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="tailwind" />
-<img src="https://img.shields.io/badge/Gemini_AI-Live-8E75B2?style=for-the-badge&logo=googlebard&logoColor=white" alt="gemini" />
-<img src="https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="vercel" />
+<p>
+  <a href="https://lunara-studio-liard.vercel.app/"><img alt="Live" src="https://img.shields.io/badge/live-open%20Lunara-b49cff?style=for-the-badge&labelColor=07051a"></a>
+  <img alt="Gemini" src="https://img.shields.io/badge/Gemini-prompt%20ideas-5ef2d6?style=for-the-badge&labelColor=07051a">
+  <img alt="R3F" src="https://img.shields.io/badge/R3F-3D%20visualiser-ff8ac2?style=for-the-badge&labelColor=07051a">
+  <img alt="MIDI" src="https://img.shields.io/badge/export-WebM%20%C2%B7%20MIDI-b49cff?style=for-the-badge&labelColor=07051a">
+</p>
 
-<br /><br />
+<p><em>A prompt engineer, player and visualiser for AI music generation.<br>
+Build the perfect prompt, hear the result, watch it move and export it as video or MIDI.</em></p>
 
-```text
- ██╗     ██╗   ██╗███╗   ██╗█████╗ ██████╗  █████╗ 
- ██║     ██║   ██║████╗  ██║██╔══╝ ██╔══██╗██╔══██╗
- ██║     ██║   ██║██╔██╗ ██║██████╗██████╔╝███████║
- ██║     ██║   ██║██║╚██╗██║██╔═══╝██╔══██╗██╔══██║
- ███████╗╚██████╔╝██║ ╚████║██║    ██║  ██║██║  ██║
- ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝    ╚═╝  ╚═╝╚═╝  ╚═╝
-```
-
-### **Lunara Studio** — Tek Arayüz. Sınırsız Melodi. Yapay Zekayla Profesyonel Müzik Üretimi.
-
-**Yapay zeka ses motoru** · Canlı görselleştirme · Katmanlı kompozisyonlar · Tek tıklamayla video ihracı.
-
-[🚀 Canlı Demo](https://lunara-studio-liard.vercel.app/) · [⚡ Gemini AI](https://deepmind.google/technologies/gemini/) · [☁️ Vercel](https://vercel.com)
+<a href="https://lunara-studio-liard.vercel.app/"><img src="docs/screenshots/studio.png" alt="The Lunara studio" width="100%"></a>
 
 </div>
 
----
+<img src="docs/media/divider.svg" width="100%" alt="">
 
-## ✦ Genel Bakış (Overview)
+## What it is
 
-**Lunara Studio**, yapay zeka destekli müzik üretim sürecinizi baştan sona kolaylaştıran, zengin tasarıma sahip gelişmiş bir prompt oluşturucu ve görselleştirme platformudur. Yapay zeka müzik üreticileri için mükemmel melodi ve tınıyı yakalamak genellikle karmaşık denemeler gerektirir; Lunara bu noktada devreye girerek yapılandırılmış ve ilham verici bir iş akışı sunar.
+Writing a good prompt for an audio model is chaotic. Lunara turns it into a structured builder with moods, genres, themes, BPM and scales, suggests prompts with Gemini, and keeps your history with undo and redo. Prompts, history and settings stay in your browser.
 
-Prompt fikirlerinizi not defterlerinde saklamayı bırakın. Lunara ile dinamik şarkı yönergeleri oluşturabilir, Gemini AI destekli prompt önerileri alabilir, geçmiş fikirlerinizi geri alıp/yineleyebilir (undo/redo), şarkılarınızı sıraya ekleyebilir, albümler halinde gruplayabilir ve ürettiğiniz müzikleri dalga formları (waveform) veya parçacık (particle) efektleriyle özelleştirilmiş videolar olarak dışa aktarabilirsiniz.
+| | |
+|---|---|
+| **Prompt builder** | Moods, genres, themes, BPM and scales in one structured form. |
+| **AI suggestions** | Gemini proposes the strongest prompt for the traits you picked. |
+| **Visual context** | Attach reference images alongside the prompt. |
+| **Play queue** | Queue, reorder and play generated tracks back to back. |
+| **3D visualiser** | A React Three Fiber sphere that follows the rhythm and tempo. |
+| **Video export** | Record waveform, bars or particle visuals as WebM. |
+| **MIDI download** | Get the chord sheet as a `.mid` file for your DAW. |
+| **History** | Unlimited undo / redo with local autosave. |
+| **Two lengths** | *Pro* asks Lyria 3 Pro for a full track; *Clip* asks Lyria 3 Clip for a short one. Audio streams back and plays as it arrives. |
+| **Title, cover and lyrics** | Gemini names the song and an image model paints a cover. Lyrics come back with the audio, are parsed into timed lines and highlight with playback. |
+| **Studio effects** | Real-time Web Audio plugins on playback: chorus, delay, distortion, a low-pass filter and vinyl crackle. |
+| **Community** | A community area behind Google sign-in (early). |
 
----
+<img src="docs/media/divider.svg" width="100%" alt="">
 
-## ✦ English Description
+## From traits to a track
 
-**Lunara Studio** is a next-generation AI music generation helper, prompt engineer, and interactive visualization platform. Crafting the perfect prompt for audio models can be a chaotic process. Lunara streamlines this journey by providing an elegant, feature-rich interface to build prompts, get AI-powered recommendations, manage generation history, queue playback, and export songs into videos with reactive visualizers.
-
-All data, prompt history, and user settings are kept locally, ensuring absolute privacy while allowing seamless integration with the Google Gemini API for creative prompts and high-fidelity audio output.
-
----
-
-<div align="center">
-<img src="docs/screenshots/landing.png" alt="Lunara Giriş Ekranı" width="49%" />
-<img src="docs/screenshots/studio.png" alt="Lunara Stüdyo Arayüzü" width="49%" />
-</div>
-
----
-
-## ⚡ Öne Çıkan Özellikler (Features)
-
-| Özellik | Açıklama |
-|--------|----------|
-| 🎛️ **Prompt Builder** | Moods, genres, themes, BPM ve Scales içeren yapay zekaya uygun yönerge yapıcı. |
-| 🤖 **Gemini AI Önerileri** | Seçtiğiniz müzik özelliklerine göre en iyi promptu üreten Gemini destekli öneri motoru. |
-| 🎥 **Video Dışa Aktarım** | Waveform, Bars ve Particle görselleştiricileriyle audio dosyalarını doğrudan WebM olarak kaydetme. |
-| 🕰️ **Undo/Redo & Geçmiş** | Prompt değişikliklerinde sınırsız geri alma/yineleme ve yerel otomatik kaydetme desteği. |
-| 🎵 **Gelişmiş Oynatma Kuyruğu** | Üretilen parçaları kuyruğa ekleme, sürükleme, sıralama ve kesintisiz arka arkaya dinleme. |
-| 🎹 **MIDI Desteği** | Üretilen şarkının akor şemasını DAW yazılımlarında kullanmak üzere anında `.mid` olarak indirme. |
-| 🖼️ **Görsel Bağlam** | Prompt ile birlikte yapay zekaya girdi olarak verilecek referans resimleri yükleme. |
-| 🌌 **3D Canlı Görselleştirici** | React Three Fiber tabanlı, çalan müziğin ritmine ve temposuna duyarlı dinamik 3D küre. |
-
----
-
-<div align="center">
-<img src="docs/screenshots/demo.webp" alt="Müzik Oynatma ve 3D Görselleştirici Akışı" width="80%" />
-</div>
-
----
-
-## 🛠️ Teknolojiler (Tech Stack)
-
-```text
-Arayüz         →  React 19 (Strict Mode) · TypeScript · Vite 6
-Stil           →  Tailwind CSS v4 · Glassmorphism tasarımlar
-Yapay Zeka     →  Google GenAI SDK (@google/genai)
-Ses Modelleri  →  lyria-3-pro-preview · lyria-3-clip-preview
-Görsel Üretim  →  gemini-2.5-flash-image
-3D Render      →  Three.js · @react-three/fiber · @react-three/drei
-Yerel Depolama →  localStorage (otomatik kayıt & geçmiş)
-Yayınlama      →  Vercel (SPA routing desteğiyle)
+```mermaid
+flowchart LR
+  T[Traits<br/>mood · genre · theme · BPM · scale] --> PB[Prompt builder]
+  IMG[Reference images] --> PB
+  PB --> SUG[Gemini 3 Flash<br/>prompt suggestions]
+  PB --> API[/api/generate-audio/]
+  API --> LY[Lyria 3 Pro or Clip<br/>streamed audio]
+  PB --> META[/api/generate-meta/]
+  META --> TT[Title]
+  META --> CV[Cover art]
+  LY --> TL[Timed lyrics]
+  LY --> PL[Player · queue · effects]
+  TL --> PL
+  PL --> VIS[3D visualiser]
+  PL --> EX[WebM video · MIDI]
 ```
 
----
+Keys stay on the server: the browser talks to two small API routes, never to the models directly.
 
-## 🔄 Çalışma Mantığı (Data Flow)
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/landing.png" alt="The landing page"></td>
+    <td width="50%"><img src="docs/screenshots/demo.webp" alt="The studio in motion"></td>
+  </tr>
+  <tr>
+    <td align="center"><code>landing</code></td>
+    <td align="center"><code>studio</code> · in motion</td>
+  </tr>
+</table>
 
-```text
-                        ┌─ Referans Görseller (Camera API)
-  Kullanıcı Girdileri ──▶├─ Prompt Şablonları (Helper Mode)  ──▶  Google GenAI API
-                         └─ Özel Akor ve Sözler (Lyrics)         (Model: Lyria-3)
-                                                                       │
-  Kuyruk & Albüm  ◀── Video/MIDI İhracı · 3D Visualizer ◀──────────────┘
-  (Local Storage)     (Canvas / R3F / MediaRecorder)
-```
+<img src="docs/media/divider.svg" width="100%" alt="">
 
-1. **Prompt Hazırlama**: Kullanıcı şablonlar aracılığıyla ya da serbest metin olarak müzik direktiflerini belirler. AI Prompt Suggestion motoruyla alternatifler türetebilir.
-2. **Audio & Medya Sentezi**: Google GenAI SDK üzerinden Lyria ses modelleriyle parça oluşturulur. Paralel olarak şarkıya başlık ve 1:1 formatında albüm kapağı oluşturulur.
-3. **Müzik Oynatma & Efekt**: Çalan müzikle senkronize olan 3D küre ve dalga boyu analizörleri çalışır.
-4. **Kayıt ve İndirme**: Kullanıcı isterse parçayı `.wav` olarak, akorları `.mid` olarak, veya şarkı sözlerinin senkronize aktığı bir karaoke videosunu `.webm` olarak indirebilir.
+## Türkçe özet
 
----
+**Lunara Studio**, yapay zekâ ile müzik üretim sürecini kolaylaştıran bir prompt oluşturucu ve görselleştirme platformu. Ruh hali, tür, tema, BPM ve gam seçerek yapılandırılmış bir yönerge kuruyor, Gemini'den öneri alıyor, üretilen parçaları sıraya alıp dinliyorsun. Çalan müziğe tepki veren 3B görselleştirici var; sonuçlar WebM video ya da MIDI olarak indirilebiliyor. Tüm veriler tarayıcıda kalıyor.
 
-## 📐 Proje Yapısı (Project Structure)
+<img src="docs/media/divider.svg" width="100%" alt="">
 
-```text
-LunaraStudio/
-├── src/
-│   ├── components/
-│   │   ├── PromptBuilder.tsx      # Prompt şablonları oluşturan modül
-│   │   ├── ThreeDVisualizer.tsx   # React Three Fiber 3D görselleştirici
-│   │   ├── CommunityFeed.tsx      # Topluluk ve Firebase paylaşım ekranı
-│   │   └── SongCard.tsx           # Galeri şarkı kartı tasarımı
-│   ├── services/
-│   │   └── genaiService.ts        # Gemini metin, görsel ve öneri servisleri
-│   ├── utils/
-│   │   ├── audioUtils.ts          # Base64 ses çözme yardımcıları
-│   │   ├── midiUtils.ts           # MIDI dosya yazma ve indirme motoru
-│   │   ├── lyricsUtils.ts         # Şarkı sözleri zamanlama ayıklayıcısı
-│   │   └── videoUtils.ts          # Canvas tabanlı WebM video kayıt sentezleyici
-│   ├── config.ts                  # Lyria model ve arayüz konfigürasyonları
-│   └── lib/
-│       └── firebase.ts            # Auth & veritabanı istemcisi
-├── App.tsx                        # Ana uygulama bileşeni ve durum yönetimi
-├── vercel.json                    # SPA yönlendirmeleri için Vercel ayarları
-├── package.json                   # Bağımlılıklar ve derleme betikleri
-└── index.html                     # Arayüz giriş noktası
-```
+## Development
 
----
-
-## 🚀 Kurulum ve Çalıştırma (Getting Started)
-
-### Gereksinimler
-- Node.js `>= 18`
-- Google Gemini API Anahtarı ([Google AI Studio](https://aistudio.google.com/))
-
-```bash
-# Projeyi klonlayın
-git clone https://github.com/kutluhangil/LunaraStudio.git
-cd LunaraStudio
-
-# Bağımlılıkları yükleyin
+```sh
 npm install
-
-# Geliştirme sunucusunu başlatın
-npm run dev        # Tarayıcıda açın: http://localhost:3000
-```
-
-### Derleme (Build)
-```bash
-# Production paketini hazırlayın
+cp .env.example .env.local   # GEMINI_API_KEY
+npm run dev                  # http://localhost:5173
 npm run build
-
-# Yerel olarak test edin
-npm run preview
+npm run lint                 # tsc --noEmit
 ```
 
----
+```
+App.tsx            studio: builder, player, queue, generation
+src/components/    prompt builder, 3D visualiser, community feed
+src/services/      Gemini helpers: suggestions, title, cover, output parsing
+src/utils/         audio effects, timed lyrics, MIDI export, logging
+api/               generate-audio (Lyria) and generate-meta (suggestions, title, cover)
+```
 
 <div align="center">
-
-Müzisyenler ve içerik üreticileri için ❤️ ile tasarlandı · **[kutluhangil](https://github.com/kutluhangil)**
-
-<br />
-
-*Beğendiyseniz yıldız ⭐ bırakmayı unutmayın.*
-
+<br>
+<a href="https://github.com/kutluhangil"><img src="docs/media/signature.svg" width="100%" alt="Built by kutluhangil"></a>
+<sub>Under the moon, every prompt finds its melody. · the track in the banner is invented.</sub>
 </div>
